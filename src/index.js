@@ -11,6 +11,8 @@ function Square(props) {
   return <button className="square">{props.value}</button>;
 }
 
+
+
 class MessageBoard extends React.Component {
   renderSquare(i) {
     return <Square value={this.props.squares[i]} key={i} />;
