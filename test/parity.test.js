@@ -1,6 +1,7 @@
 const {
   generateMsg,
   getBlock,
+  getBlockIndexes,
   getBlockParity,
   generateData,
 } = require("../src/parity.js");
@@ -18,6 +19,22 @@ test("test get block size", () => {
 
   expect(block.length).toEqual(8);
 });
+
+test("test get block indexes", () => {
+  // prettier-ignore
+  let msg = [
+    1, 0, 1, 1,
+    1, 0, 0, 0,
+    0, 0, 0, 1,
+    0, 1, 1, 1
+  ];
+
+  let indexes = getBlockIndexes(msg, 0);
+  // prettier-ignore
+  expect(indexes).toEqual([
+    1, 3, 5, 7, 9, 11, 13, 15
+  ]);
+})
 
 test("test get block", () => {
   // prettier-ignore

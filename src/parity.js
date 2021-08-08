@@ -13,6 +13,13 @@ function getBlockParity(data) {
  */
 function getBlock(data, power) {
   // generates strings with binary values, padded with zeros
+  const matchingIndexes = getBlockIndexes(data, power);
+  const matchingData = matchingIndexes.map((index) => data[index]);
+
+  return matchingData;
+}
+
+function getBlockIndexes(data, power) {
   const size = data.length;
   const binaryData = data.map((value, index) => {
     return index.toString(2).padStart(Math.sqrt(size), "0");
@@ -21,25 +28,20 @@ function getBlock(data, power) {
   let matching = [];
   // for each string, reverse, check if there's a 1 in the correct place
   for (let value of binaryData) {
-    if (
-      value
-        .split("")
-        .reverse()
-        .join("")
-        .charAt(power) === "1"
-    ) {
+    if (value.split("").reverse().join("").charAt(power) === "1") {
       // want the actual data back at the end
       let index = parseInt(value, 2);
-      matching.push(data[index]);
+      matching.push(index);
     }
   }
-
   return matching;
 }
 
 function generateData(size) {
   // just fill with random binary data first
-  const data = Array.from({ length: size ** 2 }, () => Math.round(Math.random()));
+  const data = Array.from({ length: size ** 2 }, () =>
+    Math.round(Math.random())
+  );
 
   return data;
 }
@@ -74,6 +76,7 @@ function generateMsg(size) {
 
 module.exports = {
   getBlock: getBlock,
+  getBlockIndexes: getBlockIndexes,
   getBlockParity: getBlockParity,
   generateMsg: generateMsg,
   generateData: generateData,
