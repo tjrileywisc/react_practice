@@ -8,13 +8,13 @@ import {
 } from "./parity.js";
 import "./index.css";
 
-function NextStep(props) {
-  const str = `Run step ${props}`;
+function NextStep(step) {
+  const str = `Run step ${step}`;
   return <button>{str}</button>;
 }
 
-function CycleBlocks(props) {
-  const str = `Get block ${props.blockNumber}`;
+function CycleBlocks(blockNumber) {
+  const str = `Get block ${blockNumber}`;
   return <button>{str}</button>;
 }
 
@@ -24,7 +24,7 @@ function Square(props) {
 }
 
 class MessageBoard extends React.Component {
-  renderSquare(i, highlight) {
+  renderSquare(i, highlight, corrupted) {
     // what type of square is this?
     let classes = [];
     if (i === 0) {
@@ -36,9 +36,18 @@ class MessageBoard extends React.Component {
     }
 
     if (highlight) classes.push("highlighted");
+
+    if (corrupted) classes.push("corrupted");
     // just leave the data blocks as they are
 
-    return <Square classes={classes} value={this.props.msg[i]} key={i} />;
+    return (
+      <Square
+        classes={classes}
+        value={this.props.msg[i]}
+        key={i}
+        onClick={() => this.props.onClick(i)}
+      />
+    );
   }
 
   highlightBlock(i) {
@@ -60,7 +69,8 @@ class MessageBoard extends React.Component {
       for (let j = 0; j < colNum; j++) {
         const highlight =
           this.props.activeBlock === 0 ? this.highlightBlock(i) : false;
-        thisRow.push(this.renderSquare(squareKey, highlight));
+        const corrupted = this.props.corruptedSquares.includes(i) ? true : false;
+        thisRow.push(this.renderSquare(squareKey, highlight, corrupted));
         squareKey += 1;
       }
       domRows.push(
@@ -81,10 +91,26 @@ class Hamming extends React.Component {
     super(props);
     this.state = {
       squares: Array(16).fill(null),
-      step: 1,
+      nextStep: 1,
       size: 4,
       activeBlock: 0,
+      corruptedSquares: [],
     };
+  }
+
+  corruptSquare(i) {
+    let current = this.state.squares;
+    current[i] = !current[i];
+    let currentCorrupted = this.state.corruptedSquares;
+    if(currentCorrupted.includes(i)) {
+      currentCorrupted.filter((value, index) => index !== i);
+    } else {
+      currentCorrupted.push(i);
+    }
+    this.setState({
+      squares: current,
+      corruptedSquares: currentCorrupted,
+    });
   }
 
   render() {
@@ -95,11 +121,13 @@ class Hamming extends React.Component {
             squares={this.state.squares}
             activeBlock={this.state.activeBlock}
             msg={generateMsg(this.state.size)}
+            onClick={(i) => this.corruptSquare(i)}
+            corruptedSquares={this.state.corruptedSquares}
           />
         </div>
         <div className="hamming-info">
-          <div>{NextStep(this.state.step)}</div>
-          <div>{CycleBlocks(this.state.step)}</div>
+          <div>{NextStep(this.state.nextStep)}</div>
+          <div>{CycleBlocks(this.state.activeBlock)}</div>
         </div>
       </div>
     );
