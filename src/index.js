@@ -14,13 +14,17 @@ function NextStep(step) {
 }
 
 function CycleBlocks(blockNumber) {
-  const str = `Get block ${blockNumber}`;
+  const str = `Get next block`;
   return <button>{str}</button>;
 }
 
 function Square(props) {
   let classes = `square ${props.classes.join(" ")}`;
-  return <button className={classes}>{props.value}</button>;
+  return (
+    <button className={classes} onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class MessageBoard extends React.Component {
@@ -68,8 +72,10 @@ class MessageBoard extends React.Component {
       let thisRow = [];
       for (let j = 0; j < colNum; j++) {
         const highlight =
-          this.props.activeBlock === 0 ? this.highlightBlock(i) : false;
-        const corrupted = this.props.corruptedSquares.includes(i) ? true : false;
+          this.props.activeBlock === 0 ? this.highlightBlock(squareKey) : false;
+        const corrupted = this.props.corruptedSquares.includes(squareKey)
+          ? true
+          : false;
         thisRow.push(this.renderSquare(squareKey, highlight, corrupted));
         squareKey += 1;
       }
@@ -93,7 +99,7 @@ class Hamming extends React.Component {
       squares: Array(16).fill(null),
       nextStep: 1,
       size: 4,
-      activeBlock: 0,
+      activeBlock: -1,
       corruptedSquares: [],
     };
   }
@@ -102,8 +108,8 @@ class Hamming extends React.Component {
     let current = this.state.squares;
     current[i] = !current[i];
     let currentCorrupted = this.state.corruptedSquares;
-    if(currentCorrupted.includes(i)) {
-      currentCorrupted.filter((value, index) => index !== i);
+    if (currentCorrupted.includes(i)) {
+      currentCorrupted = currentCorrupted.filter((index) => index !== i);
     } else {
       currentCorrupted.push(i);
     }
