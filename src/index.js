@@ -1,19 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  generateMsg,
-  getBlockIndexes,
-} from "./parity.js";
+import { generateMsg, getBlockIndexes } from "./parity.js";
 import "./index.css";
 
-function NextStep(step) {
-  const str = `Run step ${step}`;
-  return <button>{str}</button>;
-}
-
-function CycleBlocks(blockNumber) {
-  const str = `Get next block`;
-  return <button>{str}</button>;
+class NextStepButton extends React.Component {
+  render() {
+    const str = `Run step ${this.props.currentStep}`;
+    return <button onClick={() => this.props.onClick()}>{str}</button>;
+  }
 }
 
 function Square(props) {
@@ -40,7 +34,6 @@ class MessageBoard extends React.Component {
     if (highlight) classes.push("highlighted");
 
     if (corrupted) classes.push("corrupted");
-    // just leave the data blocks as they are
 
     return (
       <Square
@@ -69,8 +62,7 @@ class MessageBoard extends React.Component {
     for (let i = 0; i < rowNum; i++) {
       let thisRow = [];
       for (let j = 0; j < colNum; j++) {
-        const highlight =
-          this.props.activeBlock === 0 ? this.highlightBlock(squareKey) : false;
+        const highlight = this.highlightBlock(squareKey);
         const corrupted = this.props.corruptedSquares.includes(squareKey)
           ? true
           : false;
@@ -88,14 +80,14 @@ class MessageBoard extends React.Component {
 }
 
 /**
- * The hamming checker main app
+ * The hamming checker main app; handles the overall state
  */
 class Hamming extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       squares: Array(16).fill(null),
-      nextStep: 1,
+      currentStep: 0,
       size: 4,
       activeBlock: -1,
       corruptedSquares: [],
@@ -117,6 +109,20 @@ class Hamming extends React.Component {
     });
   }
 
+  advanceStep() {
+    let lastStep = this.state.currentStep;
+    let lastActiveBlock = this.state.activeBlock;
+    if (lastStep + 1 <= this.state.size) {
+      this.setState({
+        currentStep: (lastStep += 1),
+        activeBlock: (lastActiveBlock += 1),
+      });
+    } else {
+      // don't advance anymore; either print some sort of
+      // result message or recreate this completely
+    }
+  }
+
   render() {
     return (
       <div className="hamming">
@@ -130,8 +136,12 @@ class Hamming extends React.Component {
           />
         </div>
         <div className="hamming-info">
-          <div>{NextStep(this.state.nextStep)}</div>
-          <div>{CycleBlocks(this.state.activeBlock)}</div>
+          <div>
+            <NextStepButton
+              currentStep={this.state.currentStep}
+              onClick={() => this.advanceStep()}
+            />
+          </div>
         </div>
       </div>
     );
@@ -140,4 +150,7 @@ class Hamming extends React.Component {
 
 // ========================================
 
-ReactDOM.render(<Hamming msg={generateMsg(4)}/>, document.getElementById("root"));
+ReactDOM.render(
+  <Hamming msg={generateMsg(4)} />,
+  document.getElementById("root")
+);
