@@ -2,9 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {
   generateMsg,
-  getBlock,
   getBlockIndexes,
-  getBlockParity,
 } from "./parity.js";
 import "./index.css";
 
@@ -126,7 +124,7 @@ class Hamming extends React.Component {
           <MessageBoard
             squares={this.state.squares}
             activeBlock={this.state.activeBlock}
-            msg={generateMsg(this.state.size)}
+            msg={this.props.msg}
             onClick={(i) => this.corruptSquare(i)}
             corruptedSquares={this.state.corruptedSquares}
           />
@@ -142,4 +140,4 @@ class Hamming extends React.Component {
 
 // ========================================
 
-ReactDOM.render(<Hamming />, document.getElementById("root"));
+ReactDOM.render(<Hamming msg={generateMsg(4)}/>, document.getElementById("root"));
