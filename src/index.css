@@ -31,6 +31,12 @@ body {
     text-align: center;
     width: 34px;
   }
+  .square.zero {
+    background: pink
+  }
+  .square.parity {
+    background: cyan
+  }
   
   .square:focus {
     outline: none;

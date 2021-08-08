@@ -29,7 +29,8 @@ function getBlock(data, power) {
         .charAt(2 ** power) === "1"
     ) {
       // want numbers back at the end
-      matching.push(parseInt(value, 2));
+      let index = parseInt(value, 2);
+      matching.push(data[index]);
     }
   }
 
@@ -59,7 +60,7 @@ function generateMsg(size) {
   // (with 0000 set to full table parity)
   // i.e. 2^n for 0..size of table
 
-  for (let power = 1; power < Math.sqrt(size) + 1; power++) {
+  for (let power = 1; power < Math.sqrt(size); power++) {
     let block = getBlock(data, power);
     let parity = getBlockParity(block);
     data[power] = parity;

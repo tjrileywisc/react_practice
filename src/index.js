@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { generateMsg } from "./parity.js";
 import "./index.css";
 
 function NextStep(props) {
@@ -8,14 +9,23 @@ function NextStep(props) {
 }
 
 function Square(props) {
-  return <button className="square">{props.value}</button>;
+  let classes = `square ${props.classes}`;
+  return <button className={classes}>{props.value}</button>;
 }
-
-
 
 class MessageBoard extends React.Component {
   renderSquare(i) {
-    return <Square value={this.props.squares[i]} key={i} />;
+    // what group is this in?
+    let classes = [];
+    if (i === 0) {
+      classes.push("zero");
+    } else if ((Math.log(i) / Math.log(2)) % 1 === 0) {
+      // is this a power of two?
+      // ref. https://stackoverflow.com/questions/30924280/what-is-the-best-way-to-determine-if-a-given-number-is-a-power-of-two
+      classes.push("parity");
+    }
+
+    return <Square classes={classes} value={this.props.squares[i]} key={i} />;
   }
 
   render() {
@@ -51,6 +61,7 @@ class Hamming extends React.Component {
     this.state = {
       squares: Array(16).fill(null),
       step: 1,
+      size: 4,
     };
   }
 
@@ -58,7 +69,10 @@ class Hamming extends React.Component {
     return (
       <div className="hamming">
         <div className="hamming-board">
-          <MessageBoard squares={this.state.squares} />
+          <MessageBoard
+            squares={this.state.squares}
+            msg={generateMsg(this.state.size)}
+          />
         </div>
         <div className="hamming-info">
           <div>{NextStep(this.state.step)}</div>
