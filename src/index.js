@@ -15,17 +15,18 @@ function Square(props) {
 
 class MessageBoard extends React.Component {
   renderSquare(i) {
-    // what group is this in?
+    // what type of square is this?
     let classes = [];
     if (i === 0) {
       classes.push("zero");
     } else if ((Math.log(i) / Math.log(2)) % 1 === 0) {
-      // is this a power of two?
+      // is this a power of two? if so, mark it as a parity bit
       // ref. https://stackoverflow.com/questions/30924280/what-is-the-best-way-to-determine-if-a-given-number-is-a-power-of-two
       classes.push("parity");
     }
+    // just leave the data blocks as they are
 
-    return <Square classes={classes} value={this.props.squares[i]} key={i} />;
+    return <Square classes={classes} value={this.props.msg[i]} key={i} />;
   }
 
   render() {
