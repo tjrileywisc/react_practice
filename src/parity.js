@@ -26,9 +26,9 @@ function getBlock(data, power) {
         .split("")
         .reverse()
         .join("")
-        .charAt(2 ** power) === "1"
+        .charAt(power) === "1"
     ) {
-      // want numbers back at the end
+      // want the actual data back at the end
       let index = parseInt(value, 2);
       matching.push(data[index]);
     }
